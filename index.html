@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aftelkalender</title>
+
+  <style>
+    :root {
+      --accent: #8b5cf6;
+      --accent-2: #ec4899;
+      --bg: #090b18;
+      --card: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.14);
+      --text: #ffffff;
+      --muted: #b8b8ca;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(139,92,246,.28), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(236,72,153,.20), transparent 28%),
+        linear-gradient(135deg, #070816, #11142d 55%, #090b18);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: .12;
+    }
+
+    .page {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 42px 0 60px;
+      position: relative;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 42px;
+    }
+
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 16px;
+      border: 1px solid rgba(139,92,246,.45);
+      border-radius: 999px;
+      background: rgba(139,92,246,.12);
+      color: #ddd2ff;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: clamp(3rem, 8vw, 6rem);
+      line-height: .95;
+      letter-spacing: -0.06em;
+      background: linear-gradient(90deg, #fff, #d8ccff, #ffb7df);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .heart {
+      margin-top: 20px;
+      font-size: 2rem;
+      animation: pulse 1.8s infinite;
+      filter: drop-shadow(0 0 14px rgba(236,72,153,.8));
+    }
+
+    @keyframes pulse {
+      50% { transform: scale(1.18); }
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .time-card {
+      position: relative;
+      padding: 30px 18px 24px;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.22);
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .time-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,.3);
+    }
+
+    .number {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+
+    .label {
+      margin-top: 12px;
+      color: #cfc3ff;
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    .bar {
+      height: 4px;
+      border-radius: 999px;
+      margin: 22px auto 0;
+      width: 72%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(139,92,246,.5);
+    }
+
+    .target {
+      margin: 24px auto 0;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(18px);
+    }
+
+    .target-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .target-icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(236,72,153,.25));
+      font-size: 1.5rem;
+    }
+
+    .target-title {
+      font-weight: 800;
+    }
+
+    #targetText {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    button {
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 13px;
+      padding: 12px 18px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,.14);
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: 0;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 30px;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.045);
+      color: #deddea;
+      font-style: italic;
+      font-size: 1.08rem;
+    }
+
+    .quote strong {
+      display: block;
+      margin-top: 12px;
+      color: #a996ff;
+      font-style: normal;
+      font-size: .9rem;
+    }
+
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #85859b;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 750px) {
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .target {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .target button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .page {
+        padding-top: 25px;
+      }
+
+      .countdown {
+        gap: 10px;
+      }
+
+      .time-card {
+        padding: 24px 10px 20px;
+      }
+
+      .number {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <header>
+      <div class="badge">📅 It's the final countdown</div>
+
+      <!-- PAS HIER JE TITEL AAN -->
+      <h1 id="title">Europa-Park</h1>
+
+      <!-- PAS HIER JE ONDERTITEL AAN -->
+      <p class="subtitle" id="subtitle">
+        Nog even en dan gaan we op reis! 🎢
+      </p>
+
+      <div class="heart">🚗🎢🧳</div>
+    </header>
+
+    <section class="countdown" aria-label="Afteller">
+      <article class="time-card">
+        <div class="number" id="days">00</div>
+        <div class="label">DAGEN</div>
+        <div class="bar"></div>
+      </article>
+
+      <article class="time-card">
+        <div class="number" id="hours">00</div>
+        <div class="label">UREN</div>
+        <div class="bar"></div>
+      </article>
+
+      <article class="time-card">
+        <div class="number" id="minutes">00</div>
+        <div class="label">MINUTEN</div>
+        <div class="bar"></div>
+      </article>
+
+      <article class="time-card">
+        <div class="number" id="seconds">00</div>
+        <div class="label">SECONDEN</div>
+        <div class="bar"></div>
+      </article>
+    </section>
+
+   
+      </div>
+
+      
+    </section>
+
+    <section class="quote">
+      “Welkom in Europa, blijf hier tot ik dood ga, europa-park, europa-park”
+      <strong>— Joost groot inplaats van klein</strong>
+    </section>
+
+    <footer>
+      Gemaakt met ♥ &nbsp;•&nbsp; Blijf gefocust en geniet van het moment!
+    </footer>
+  </main>
+
+  <script>
+  const targetDate = new Date("2026-10-18T02:00:00");
+
+  function updateCountdown() {
+    if (document.hidden) return; // Alleen updaten als tabblad actief is
+
+    const now = new Date();
+    const diff = targetDate - now;
+
+    const seconds = Math.floor(diff / 1000);
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    const hours = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((seconds % (60 * 60)) / 60);
+    const secs = seconds % 60;
+
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = secs;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
+
+</body>
+</html>
