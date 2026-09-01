@@ -1,355 +1,1799 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aftelkalender</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    :root {
-      --accent: #8b5cf6;
-      --accent-2: #ec4899;
-      --bg: #090b18;
-      --card: rgba(255,255,255,0.08);
-      --border: rgba(255,255,255,0.14);
-      --text: #ffffff;
-      --muted: #b8b8ca;
-    }
+    <title>Europa-Park Countdown 🎢</title>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <style>
+        :root {
+            --accent: #8b5cf6;
+            --accent2: #ec4899;
+            --blue: #3b82f6;
+            --green: #22c55e;
 
-    body {
-      min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 20%, rgba(139,92,246,.28), transparent 30%),
-        radial-gradient(circle at 85% 15%, rgba(236,72,153,.20), transparent 28%),
-        linear-gradient(135deg, #070816, #11142d 55%, #090b18);
-      overflow-x: hidden;
-    }
+            --bg: #070812;
+            --card: rgba(255,255,255,.075);
+            --card-hover: rgba(255,255,255,.11);
+            --border: rgba(255,255,255,.13);
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px);
-      background-size: 80px 80px;
-      opacity: .12;
-    }
+            --text: #ffffff;
+            --muted: #a8a8bd;
+        }
 
-    .page {
-      width: min(1100px, 92%);
-      margin: auto;
-      padding: 42px 0 60px;
-      position: relative;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    header {
-      text-align: center;
-      margin-bottom: 42px;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .badge {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      padding: 9px 16px;
-      border: 1px solid rgba(139,92,246,.45);
-      border-radius: 999px;
-      background: rgba(139,92,246,.12);
-      color: #ddd2ff;
-      font-size: .82rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
+        body {
+            min-height: 100vh;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-    h1 {
-      margin-top: 20px;
-      font-size: clamp(3rem, 8vw, 6rem);
-      line-height: .95;
-      letter-spacing: -0.06em;
-      background: linear-gradient(90deg, #fff, #d8ccff, #ffb7df);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+            color: var(--text);
 
-    .subtitle {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
+            background:
+                radial-gradient(circle at 10% 10%, rgba(139,92,246,.30), transparent 28%),
+                radial-gradient(circle at 90% 10%, rgba(236,72,153,.22), transparent 25%),
+                radial-gradient(circle at 50% 100%, rgba(59,130,246,.15), transparent 30%),
+                linear-gradient(135deg, #060712, #11142c 55%, #080914);
 
-    .heart {
-      margin-top: 20px;
-      font-size: 2rem;
-      animation: pulse 1.8s infinite;
-      filter: drop-shadow(0 0 14px rgba(236,72,153,.8));
-    }
+            overflow-x: hidden;
+        }
 
-    @keyframes pulse {
-      50% { transform: scale(1.18); }
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
 
-    .countdown {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
+            background-image:
+                radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px);
 
-    .time-card {
-      position: relative;
-      padding: 30px 18px 24px;
-      text-align: center;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 20px 50px rgba(0,0,0,.22);
-      transition: transform .25s ease, border-color .25s ease;
-    }
+            background-size: 80px 80px;
+            opacity: .10;
+            z-index: -1;
+        }
 
-    .time-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(255,255,255,.3);
-    }
+        .page {
+            width: min(1100px, 92%);
+            margin: auto;
+            padding: 40px 0 70px;
+        }
 
-    .number {
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-    }
+        /* =========================
+           HEADER
+        ========================= */
 
-    .label {
-      margin-top: 12px;
-      color: #cfc3ff;
-      font-size: .8rem;
-      font-weight: 800;
-      letter-spacing: .16em;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 42px;
+        }
 
-    .bar {
-      height: 4px;
-      border-radius: 999px;
-      margin: 22px auto 0;
-      width: 72%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      box-shadow: 0 0 18px rgba(139,92,246,.5);
-    }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
 
-    .target {
-      margin: 24px auto 0;
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: rgba(255,255,255,.07);
-      backdrop-filter: blur(18px);
-    }
+            padding: 9px 16px;
 
-    .target-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+            border: 1px solid rgba(139,92,246,.45);
+            border-radius: 999px;
 
-    .target-icon {
-      width: 52px;
-      height: 52px;
-      display: grid;
-      place-items: center;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(236,72,153,.25));
-      font-size: 1.5rem;
-    }
+            background: rgba(139,92,246,.12);
 
-    .target-title {
-      font-weight: 800;
-    }
+            color: #ddd2ff;
 
-    #targetText {
-      margin-top: 5px;
-      color: var(--muted);
-    }
+            font-size: .8rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
 
-    button {
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 13px;
-      padding: 12px 18px;
-      color: white;
-      background: rgba(255,255,255,.08);
-      cursor: pointer;
-      font: inherit;
-      font-weight: 700;
-      transition: .2s;
-    }
+        h1 {
+            margin-top: 20px;
 
-    button:hover {
-      background: rgba(255,255,255,.14);
-      transform: translateY(-2px);
-    }
+            font-size: clamp(3.2rem, 8vw, 6.5rem);
+            line-height: .9;
 
-    .primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      border: 0;
-    }
+            letter-spacing: -.07em;
 
-    .quote {
-      margin-top: 24px;
-      padding: 30px;
-      text-align: center;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: rgba(255,255,255,.045);
-      color: #deddea;
-      font-style: italic;
-      font-size: 1.08rem;
-    }
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #d8ccff,
+                #ffb7df
+            );
 
-    .quote strong {
-      display: block;
-      margin-top: 12px;
-      color: #a996ff;
-      font-style: normal;
-      font-size: .9rem;
-    }
+            -webkit-background-clip: text;
+            background-clip: text;
 
-    footer {
-      margin-top: 28px;
-      text-align: center;
-      color: #85859b;
-      font-size: .9rem;
-    }
+            color: transparent;
+        }
 
-    @media (max-width: 750px) {
-      .countdown {
-        grid-template-columns: repeat(2, 1fr);
-      }
+        .subtitle {
+            margin-top: 20px;
 
-      .target {
-        align-items: stretch;
-        flex-direction: column;
-      }
+            color: var(--muted);
+            font-size: 1.05rem;
+        }
 
-      .target button {
-        width: 100%;
-      }
-    }
+        .travel-icons {
+            margin-top: 20px;
 
-    @media (max-width: 430px) {
-      .page {
-        padding-top: 25px;
-      }
+            font-size: 2rem;
 
-      .countdown {
-        gap: 10px;
-      }
+            animation: floating 3s ease-in-out infinite;
+        }
 
-      .time-card {
-        padding: 24px 10px 20px;
-      }
+        @keyframes floating {
+            0%, 100% {
+                transform: translateY(0);
+            }
 
-      .number {
-        font-size: 3rem;
-      }
-    }
-  </style>
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* =========================
+           COUNTDOWN
+        ========================= */
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .time-card {
+            position: relative;
+
+            padding: 30px 18px 24px;
+
+            text-align: center;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            background: var(--card);
+            backdrop-filter: blur(18px);
+
+            box-shadow: 0 20px 50px rgba(0,0,0,.22);
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                background .25s ease;
+        }
+
+        .time-card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(255,255,255,.28);
+            background: var(--card-hover);
+        }
+
+        .number {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+
+            line-height: 1;
+
+            font-weight: 900;
+
+            letter-spacing: -.06em;
+        }
+
+        .label {
+            margin-top: 12px;
+
+            color: #cfc3ff;
+
+            font-size: .78rem;
+            font-weight: 900;
+
+            letter-spacing: .16em;
+        }
+
+        .bar {
+            height: 4px;
+
+            border-radius: 999px;
+
+            margin: 22px auto 0;
+
+            width: 72%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--accent),
+                    var(--accent2)
+                );
+
+            box-shadow:
+                0 0 18px rgba(139,92,246,.5);
+        }
+
+        /* =========================
+           GENERAL CARDS
+        ========================= */
+
+        .card {
+            margin-top: 22px;
+
+            padding: 28px;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            background: var(--card);
+
+            backdrop-filter: blur(18px);
+
+            box-shadow: 0 20px 50px rgba(0,0,0,.18);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .card-description {
+            margin-top: 6px;
+
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* =========================
+           TRIP STATUS
+        ========================= */
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-icon {
+            width: 52px;
+            height: 52px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(139,92,246,.35),
+                    rgba(236,72,153,.25)
+                );
+
+            font-size: 1.5rem;
+        }
+
+        .status-title {
+            font-weight: 900;
+        }
+
+        .status-date {
+            margin-top: 4px;
+
+            color: var(--muted);
+        }
+
+        .date-badge {
+            padding: 10px 15px;
+
+            border-radius: 999px;
+
+            background: rgba(34,197,94,.12);
+
+            border: 1px solid rgba(34,197,94,.25);
+
+            color: #86efac;
+
+            font-size: .8rem;
+            font-weight: 800;
+        }
+
+        /* =========================
+           WEATHER CARD
+        ========================= */
+
+        .weather-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .weather-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .weather-icon {
+            font-size: 3rem;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .weather-desc {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: .95rem;
+        }
+
+        .weather-details {
+            text-align: right;
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        /* =========================
+           DAILY FACT
+        ========================= */
+
+        .fact-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fact-card::after {
+            content: "🎢";
+
+            position: absolute;
+
+            right: 25px;
+            bottom: -20px;
+
+            font-size: 8rem;
+
+            opacity: .06;
+
+            transform: rotate(-15deg);
+        }
+
+        .fact {
+            margin-top: 20px;
+
+            font-size: 1.15rem;
+            line-height: 1.65;
+
+            color: #eeeef8;
+        }
+
+        .fact-number {
+            display: inline-flex;
+
+            margin-bottom: 12px;
+
+            padding: 6px 11px;
+
+            border-radius: 999px;
+
+            background: rgba(139,92,246,.15);
+
+            color: #cfc3ff;
+
+            font-size: .75rem;
+            font-weight: 900;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        button, .btn-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 13px;
+
+            padding: 12px 18px;
+
+            color: white;
+
+            background: rgba(255,255,255,.08);
+
+            cursor: pointer;
+
+            font: inherit;
+            font-weight: 800;
+            text-decoration: none;
+
+            transition: .2s ease;
+        }
+
+        button:hover, .btn-link:hover {
+            transform: translateY(-2px);
+
+            background: rgba(255,255,255,.14);
+
+            border-color: rgba(255,255,255,.25);
+        }
+
+        button:active, .btn-link:active {
+            transform: scale(.97);
+        }
+
+        .primary {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent2)
+                );
+
+            border: 0;
+        }
+
+        /* =========================
+           ATTRACTIE SPECIFICATIES
+        ========================= */
+
+        .attractions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .attraction-btn {
+            width: 100%;
+            text-align: left;
+            justify-content: flex-start;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            font-size: .95rem;
+        }
+
+        .attraction-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.3));
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .attraction-info-box {
+            margin-top: 20px;
+            padding: 22px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .attraction-info-box.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .attraction-title-display {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: #ddd2ff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card {
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-top: 4px;
+            color: #ffffff;
+        }
+
+        /* =========================
+           BUCKET LIST
+        ========================= */
+
+        .bucket-grid {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+        .bucket-item {
+            display: flex;
+
+            align-items: center;
+            gap: 12px;
+
+            padding: 14px;
+
+            border-radius: 14px;
+
+            background: rgba(255,255,255,.045);
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .bucket-item:hover {
+            background: rgba(255,255,255,.08);
+        }
+
+        .bucket-item input {
+            display: none;
+        }
+
+        .check {
+            width: 24px;
+            height: 24px;
+
+            display: grid;
+            place-items: center;
+
+            border: 2px solid rgba(255,255,255,.25);
+
+            border-radius: 7px;
+
+            font-size: .75rem;
+
+            transition: .2s;
+        }
+
+        .bucket-item.checked .check {
+            background: linear-gradient(
+                135deg,
+                var(--accent),
+                var(--accent2)
+            );
+
+            border-color: transparent;
+        }
+
+        .bucket-item.checked .check::after {
+            content: "✓";
+        }
+
+        .bucket-item.checked .ride {
+            color: #8e8ea3;
+            text-decoration: line-through;
+        }
+
+        .ride {
+            font-weight: 700;
+        }
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress-wrapper {
+            margin-top: 20px;
+        }
+
+        .progress-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 9px;
+
+            font-size: .85rem;
+            font-weight: 800;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+
+            overflow: hidden;
+
+            border-radius: 999px;
+
+            background: rgba(255,255,255,.08);
+        }
+
+        .progress-fill {
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--accent),
+                    var(--accent2)
+                );
+
+            transition: width .5s ease;
+        }
+
+        /* =========================
+           RANDOM RIDE
+        ========================= */
+
+        .random-box {
+            text-align: center;
+
+            padding: 25px 10px 5px;
+        }
+
+        .random-result {
+            min-height: 65px;
+
+            display: grid;
+            place-items: center;
+
+            font-size: 1.8rem;
+            font-weight: 900;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #fff,
+                    #d8ccff,
+                    #ffb7df
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .random-button {
+            margin-top: 15px;
+        }
+
+        /* =========================
+           ACHIEVEMENTS
+        ========================= */
+
+        .achievements {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .achievement {
+            padding: 18px;
+
+            text-align: center;
+
+            border-radius: 18px;
+
+            background: rgba(255,255,255,.04);
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            opacity: .4;
+
+            filter: grayscale(1);
+
+            transition: .3s;
+        }
+
+        .achievement.unlocked {
+            opacity: 1;
+
+            filter: none;
+
+            border-color: rgba(139,92,246,.4);
+
+            background: rgba(139,92,246,.08);
+        }
+
+        .achievement-icon {
+            font-size: 1.8rem;
+        }
+
+        .achievement-name {
+            margin-top: 8px;
+
+            font-weight: 900;
+            font-size: .85rem;
+        }
+
+        .achievement-desc {
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: .72rem;
+        }
+
+        /* =========================
+           MAP CARD
+        ========================= */
+
+        .map-card {
+            margin-top: 24px;
+        }
+
+        .map-container {
+            margin-top: 18px;
+            width: 100%;
+            height: 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.12);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: contrast(1.05) saturate(1.1);
+        }
+
+        .map-actions {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 28px;
+
+            text-align: center;
+
+            color: #77778f;
+
+            font-size: .85rem;
+        }
+
+        /* =========================
+           CONFETTI
+        ========================= */
+
+        .confetti {
+            position: fixed;
+
+            width: 8px;
+            height: 14px;
+
+            top: -20px;
+
+            pointer-events: none;
+
+            z-index: 9999;
+
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform:
+                    translateY(110vh)
+                    rotate(720deg);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 750px) {
+
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .status {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .date-badge {
+                text-align: center;
+            }
+
+            .bucket-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .achievements {
+                grid-template-columns: 1fr;
+            }
+
+            .map-container {
+                height: 280px;
+            }
+
+            .weather-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .weather-details {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 430px) {
+
+            .page {
+                padding-top: 25px;
+            }
+
+            .countdown {
+                gap: 10px;
+            }
+
+            .time-card {
+                padding: 24px 10px 20px;
+            }
+
+            .number {
+                font-size: 3rem;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <main class="page">
+
+<main class="page">
 
     <header>
-      <div class="badge">📅 It's the final countdown</div>
 
-      <!-- PAS HIER JE TITEL AAN -->
-      <h1 id="title">Europa-Park</h1>
+        <div class="badge">
+            🎢 EUROPA-PARK REIS
+        </div>
 
-      <!-- PAS HIER JE ONDERTITEL AAN -->
-      <p class="subtitle" id="subtitle">
-        Nog even en dan gaan we op reis! 🎢
-      </p>
+        <h1>Europa-Park</h1>
 
-      <div class="heart">🚗🎢🧳</div>
+        <p class="subtitle">
+            Nog even en dan gaan we samen op avontuur! 🧳
+        </p>
+
+        <div class="travel-icons">
+            🚗 🎢 🧳 🎠
+        </div>
+
     </header>
 
+
     <section class="countdown" aria-label="Afteller">
-      <article class="time-card">
-        <div class="number" id="days">00</div>
-        <div class="label">DAGEN</div>
-        <div class="bar"></div>
-      </article>
 
-      <article class="time-card">
-        <div class="number" id="hours">00</div>
-        <div class="label">UREN</div>
-        <div class="bar"></div>
-      </article>
+        <article class="time-card">
+            <div class="number" id="days">00</div>
+            <div class="label">DAGEN</div>
+            <div class="bar"></div>
+        </article>
 
-      <article class="time-card">
-        <div class="number" id="minutes">00</div>
-        <div class="label">MINUTEN</div>
-        <div class="bar"></div>
-      </article>
+        <article class="time-card">
+            <div class="number" id="hours">00</div>
+            <div class="label">UREN</div>
+            <div class="bar"></div>
+        </article>
 
-      <article class="time-card">
-        <div class="number" id="seconds">00</div>
-        <div class="label">SECONDEN</div>
-        <div class="bar"></div>
-      </article>
+        <article class="time-card">
+            <div class="number" id="minutes">00</div>
+            <div class="label">MINUTEN</div>
+            <div class="bar"></div>
+        </article>
+
+        <article class="time-card">
+            <div class="number" id="seconds">00</div>
+            <div class="label">SECONDEN</div>
+            <div class="bar"></div>
+        </article>
+
     </section>
 
-   
-      </div>
 
-      
+    <section class="card status">
+
+        <div class="status-left">
+
+            <div class="status-icon">
+                📅
+            </div>
+
+            <div>
+                <div class="status-title">
+                    Onze reis
+                </div>
+
+                <div class="status-date">
+                    Zondag 18 oktober 2026
+                </div>
+            </div>
+
+        </div>
+
+        <div class="date-badge" id="tripStatus">
+            FEESTMODUS: AAN🎉
+        </div>
+
     </section>
 
-    <section class="quote">
-      “Welkom in Europa, blijf hier tot ik dood ga, europa-park, europa-park”
-      <strong>— Joost groot inplaats van klein</strong>
+
+    <section class="card">
+
+        <div class="card-title">
+            🌤️ Weer in Rust (Europa-Park)
+        </div>
+
+        <div class="card-description">
+            Live weersverwachting voor het pretpark. Nu duimen voor goed weer op 18 oktober🤞
+        </div>
+
+        <div class="weather-box">
+            <div class="weather-left">
+                <div class="weather-icon" id="weatherIcon">🌡️</div>
+                <div>
+                    <div class="weather-temp" id="weatherTemp">--°C</div>
+                    <div class="weather-desc" id="weatherDesc">Weergegevens laden...</div>
+                </div>
+            </div>
+            <div class="weather-details">
+                <div id="weatherWind">Wind: -- km/h</div>
+                <div id="weatherLocation">Locatie: Europa-Park, Rust, Duitsland</div>
+            </div>
+        </div>
+
     </section>
+
+
+    <section class="card">
+
+        <div class="card-title">
+            🎢 Attractie Specificaties
+        </div>
+
+        <div class="card-description">
+            Klik op een attractie om alle technische gegevens en statistieken te bekijken.
+        </div>
+
+        <div class="attractions-grid" id="attractionsGrid">
+            </div>
+
+        <div class="attraction-info-box" id="attractionInfoBox">
+            <div class="attraction-title-display" id="infoTitle">Attractienaam</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">🚀 Topsnelheid</div>
+                    <div class="stat-value" id="infoSpeed">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">📏 Hoogte</div>
+                    <div class="stat-value" id="infoHeight">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">🛤️ Baanlengte</div>
+                    <div class="stat-value" id="infoLength">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">⏱️ Ritduur</div>
+                    <div class="stat-value" id="infoDuration">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">👥 Capaciteit / uur</div>
+                    <div class="stat-value" id="infoCapacity">-</div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <section class="card fact-card">
+
+        <div class="card-title">
+            🧠 Europa-Park weetje
+        </div>
+
+        <div class="card-description">
+            Iedere dag staat er automatisch een ander weetje.
+        </div>
+
+        <div class="fact">
+
+            <div class="fact-number" id="factNumber">
+                WEETJE VAN DE DAG
+            </div>
+
+            <div id="factText">
+                Laden...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="card">
+
+        <div class="card-title">
+            🎯 Onze Europa-Park bucketlist
+        </div>
+
+        <div class="card-description">
+            Vink af wat je hebt gedaan. Het wordt automatisch opgeslagen
+        </div>
+
+        <div class="bucket-grid" id="bucketList"></div>
+
+        <div class="progress-wrapper">
+
+            <div class="progress-top">
+
+                <span>Voortgang</span>
+
+                <span id="progressText">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="card">
+
+        <div class="card-title">
+            🎲 Waar gaan we heen?
+        </div>
+
+        <div class="card-description">
+            Kunnen jullie niet kiezen? Laat de website beslissen.
+        </div>
+
+        <div class="random-box">
+
+            <div
+                class="random-result"
+                id="randomResult">
+
+                🤔 Klik op de knop...
+
+            </div>
+
+            <button
+                class="primary random-button"
+                onclick="randomRide()">
+
+                🎢 Kies een attractie
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <section class="card">
+
+        <div class="card-title">
+            🏆 Countdown achievements
+        </div>
+
+        <div class="card-description">
+            Ontgrendel ze naarmate de reis dichterbij komt.
+        </div>
+
+        <div class="achievements">
+
+            <div class="achievement" id="achievement50">
+
+                <div class="achievement-icon">
+                    🥳
+                </div>
+
+                <div class="achievement-name">
+                    50 dagen!
+                </div>
+
+                <div class="achievement-desc">
+                    De voorpret begint.
+                </div>
+
+            </div>
+
+
+            <div class="achievement" id="achievement40">
+
+                <div class="achievement-icon">
+                    🎢
+                </div>
+
+                <div class="achievement-name">
+                    40 dagen!
+                </div>
+
+                <div class="achievement-desc">
+                    We komen dichtbij.
+                </div>
+
+            </div>
+
+
+            <div class="achievement" id="achievement30">
+
+                <div class="achievement-icon">
+                    🔥
+                </div>
+
+                <div class="achievement-name">
+                    30 dagen!
+                </div>
+
+                <div class="achievement-desc">
+                    Nog heel even!
+                </div>
+
+            </div>
+
+            <div class="achievement" id="achievement25">
+
+                <div class="achievement-icon">
+                    🕰️
+                </div>
+
+                <div class="achievement-name">
+                    25 dagen!
+                </div>
+
+                <div class="achievement-desc">
+                    Het duurt niet lang
+                </div>
+
+            </div>
+
+            <div class="achievement" id="achievement20">
+
+                <div class="achievement-icon">
+                    🚂
+                </div>
+
+                <div class="achievement-name">
+                    20 dagen!
+                </div>
+
+                <div class="achievement-desc">
+                    Bijna!
+                </div>
+
+            </div>
+
+            <div class="achievement" id="achievement14">
+
+                <div class="achievement-icon">
+                    2️⃣
+                </div>
+
+                <div class="achievement-name">
+                    2 weken!
+                </div>
+
+                <div class="achievement-desc">
+                    Nog eventjes geduld
+                </div>
+
+            </div>
+
+
+            <div class="achievement" id="achievement7">
+
+                <div class="achievement-icon">
+                    🚨
+                </div>
+
+                <div class="achievement-name">
+                    Nog 1 week!
+                </div>
+
+                <div class="achievement-desc">
+                    Laatste week.
+                </div>
+
+            </div>
+
+
+            <div class="achievement" id="achievement1">
+
+                <div class="achievement-icon">
+                    😱
+                </div>
+
+                <div class="achievement-name">
+                    MORGEN!
+                </div>
+
+                <div class="achievement-desc">
+                    Morgen vertrekken we.
+                </div>
+
+            </div>
+
+
+            <div class="achievement" id="achievement0">
+
+                <div class="achievement-icon">
+                    🎉
+                </div>
+
+                <div class="achievement-name">
+                    HET IS ZOVER!
+                </div>
+
+                <div class="achievement-desc">
+                    EUROPA-PARK!
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="card map-card">
+
+        <div class="card-title">
+            🗺️ Kaart van Europa-Park
+        </div>
+
+        <div class="card-description">
+            Verken de locatie en het park alvast voor we vertrekken!
+        </div>
+
+        
+        <div class="map-actions">
+            <a href="https://www.europapark.de/en/park-map" target="_blank" class="btn-link primary">
+                🗺️ Open de officiële pretparkplattegrond
+            </a>
+        </div>
+
+    </section>
+
 
     <footer>
-      Gemaakt met ♥ door Raylano &nbsp;•&nbsp; Hebben we er een beetje zin in?
+        Gemaakt met ♥ voor onze Europa-Park reis •
+        18 oktober 2026 🎢
     </footer>
-  </main>
 
-  <script>
-  const targetDate = new Date("2026-10-18T00:00:00");
+</main>
 
-  function updateCountdown() {
-    if (document.hidden) return; // Alleen updaten als tabblad actief is
 
-    const now = new Date();
-    const diff = targetDate - now;
+<script>
 
-    const seconds = Math.floor(diff / 1000);
-    const days = Math.floor(seconds / (60 * 60 * 24));
-    const hours = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
-    const minutes = Math.floor((seconds % (60 * 60)) / 60);
-    const secs = seconds % 60;
+    /*
+    ==================================================
+       VASTE REISDATUM
+    ==================================================
+    */
 
-    document.getElementById("days").textContent = days;
-    document.getElementById("hours").textContent = hours;
-    document.getElementById("minutes").textContent = minutes;
-    document.getElementById("seconds").textContent = secs;
-  }
+    const targetDate =
+        new Date("2026-10-18T00:00:00");
 
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
+
+    /*
+    ==================================================
+       COUNTDOWN
+    ==================================================
+    */
+
+    function updateCountdown() {
+
+        const now = new Date();
+
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+
+            document.getElementById("days").textContent = "00";
+            document.getElementById("hours").textContent = "00";
+            document.getElementById("minutes").textContent = "00";
+            document.getElementById("seconds").textContent = "00";
+
+            document.getElementById("tripStatus").textContent =
+                "HET IS ZOVER! 🎉";
+
+            unlockAchievement("achievement0");
+
+            return;
+        }
+
+        const totalSeconds =
+            Math.floor(diff / 1000);
+
+        const days =
+            Math.floor(
+                totalSeconds / (60 * 60 * 24)
+            );
+
+        const hours =
+            Math.floor(
+                (totalSeconds % (60 * 60 * 24))
+                / (60 * 60)
+            );
+
+        const minutes =
+            Math.floor(
+                (totalSeconds % (60 * 60))
+                / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        document.getElementById("days").textContent =
+            String(days).padStart(2, "0");
+
+        document.getElementById("hours").textContent =
+            String(hours).padStart(2, "0");
+
+        document.getElementById("minutes").textContent =
+            String(minutes).padStart(2, "0");
+
+        document.getElementById("seconds").textContent =
+            String(seconds).padStart(2, "0");
+
+
+        updateAchievements(days);
+    }
+
+
+    setInterval(updateCountdown, 1000);
+
+    updateCountdown();
+
+
+    /*
+    ==================================================
+       WEERBERICHT RUST (EUROPA-PARK)
+    ==================================================
+    */
+
+    async function fetchWeather() {
+        try {
+            const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.2662&longitude=7.7208&current_weather=true");
+            const data = await response.json();
+            const weather = data.current_weather;
+
+            document.getElementById("weatherTemp").textContent = Math.round(weather.temperature) + "°C";
+            document.getElementById("weatherWind").textContent = "Wind: " + Math.round(weather.windspeed) + " km/h";
+
+            const weatherCodes = {
+                0: { desc: "Onbewolkt & zonnig", icon: "☀️" },
+                1: { desc: "Vrijwel onbewolkt", icon: "🌤️" },
+                2: { desc: "Half bewolkt", icon: "⛅" },
+                3: { desc: "Geheel bewolkt", icon: "☁️" },
+                45: { desc: "Mistig", icon: "🌫️" },
+                48: { desc: "Rijp/mist", icon: "🌫️" },
+                51: { desc: "Lichte motregen", icon: "🌦️" },
+                61: { desc: "Lichte regen", icon: "🌧️" },
+                63: { desc: "Regen", icon: "🌧️" },
+                65: { desc: "Zware regen", icon: "🌧️" },
+                80: { desc: "Regenbui", icon: "🌦️" },
+                95: { desc: "Onweer", icon: "🌩️" }
+            };
+
+            const info = weatherCodes[weather.weathercode] || { desc: "Wisselvallig", icon: "🌤️" };
+            document.getElementById("weatherDesc").textContent = info.desc;
+            document.getElementById("weatherIcon").textContent = info.icon;
+
+        } catch (error) {
+            document.getElementById("weatherDesc").textContent = "Kon weer niet laden";
+        }
+    }
+
+    fetchWeather();
+
+
+    /*
+    ==================================================
+       ATTRACTIE SPECIFICATIES DATA
+    ==================================================
+    */
+
+    const attractionData = [
+        { name: "🚂 Alpenexpress Enzian - Oostenrijk", speed: "45 km/u", height: "6 m", length: "264 m", duration: "ca. 1:40 min", capacity: "1.050 pers/uur" },
+        { name: "🧚 Arthur - Koninkrijk van de Minimoys", speed: "31 km/u", height: "13.5 m", length: "550 m", duration: "ca. 4:30 min", capacity: "1.400 pers/uur" },
+        { name: "💦 Atlantica SuperSplash - Portugal", speed: "80 km/u", height: "30 m", length: "390 m", duration: "ca. 3:20 min", capacity: "1.400 pers/uur" },
+        { name: "🚃 Ba-a-a Express - Ierland", speed: "20 km/u", height: "3 m", length: "67 m", duration: "ca. 1:30 min", capacity: "500 pers/uur" },
+        { name: "🎢 Blue Fire - IJsland", speed: "100 km/u", height: "38 m", length: "1.056 m", duration: "ca. 2:30 min", capacity: "1.720 pers/uur" },
+        { name: "🛷 Schweizer Bobbahn - Zwitserland", speed: "50 km/u", height: "19 m", length: "487 m", duration: "ca. 1:45 min", capacity: "1.100 pers/uur" },
+        { name: "🎢 Euro-Mir - Rusland", speed: "80 km/u", height: "28 m", length: "980 m", duration: "ca. 4:45 min", capacity: "1.600 pers/uur" },
+        { name: "🎤 Eurosat - CanCan Coaster - Frankrijk", speed: "60 km/u", height: "25.5 m", length: "922 m", duration: "ca. 3:20 min", capacity: "1.550 pers/uur" },
+        { name: "🏔️ Matterhorn-Blitz - Zwitserland", speed: "56 km/u", height: "16 m", length: "383 m", duration: "ca. 3:05 min", capacity: "960 pers/uur" },
+        { name: "🐴 Pegasus - Griekenland", speed: "65 km/u", height: "13 m", length: "400 m", duration: "ca. 2:11 min", capacity: "1.000 pers/uur" },
+        { name: "🎢 Silver Star - Monaco", speed: "130 km/u", height: "73 m", length: "1.620 m", duration: "ca. 3:00 min", capacity: "1.750 pers/uur" },
+        { name: "🎢 Voltron Nevera - Kroatië", speed: "100 km/u", height: "32.5 m", length: "1.385 m", duration: "ca. 3:00 min", capacity: "1.600 pers/uur" },
+        { name: "🪵 Wodan - IJsland", speed: "100 km/u", height: "40 m", length: "1.050 m", duration: "ca. 2:30 min", capacity: "1.250 pers/uur" },
+        { name: "💧 Poseidon - Griekenland", speed: "70 km/u", height: "23 m", length: "850 m", duration: "ca. 4:00 min", capacity: "1.600 pers/uur" },
+        { name: "🏛️ Abenteuer Atlantis - Griekenland", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "120 m", duration: "ca. 5:00 min", capacity: "1.400 pers/uur" },
+        { name: "👵 Madame Freudenreich Curiosités - Frankrijk", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "120 m", duration: "ca. 5:00 min", capacity: "1.400 pers/uur" },
+        { name: "🍕 Piccolo Mondo - Italië", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "90 m", duration: "ca. 4:00 min", capacity: "1.000 pers/uur" },
+        { name: "🏴‍☠️ Piraten in Batavia - Nederland", speed: "N.v.t. (Water darkride)", height: "N.v.t.", length: "500 m", duration: "ca. 8:00 min", capacity: "1.800 pers/uur" },
+        { name: "📖 Schlittenfahrt Schneeflöckchen - Rusland", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "80 m", duration: "ca. 3:30 min", capacity: "900 pers/uur" },
+        { name: "🍄 Snorri Touren - Scandinavië", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "100 m", duration: "ca. 4:30 min", capacity: "700 pers/uur" },
+        { name: "👻 Castello dei Medici - Italië", speed: "N.v.t. (Darkride)", height: "N.v.t.", length: "150 m", duration: "ca. 4:00 min", capacity: "1.200 pers/uur" }
+    ];
+
+    function initAttractionSection() {
+        const grid = document.getElementById("attractionsGrid");
+        const infoBox = document.getElementById("attractionInfoBox");
+
+        attractionData.forEach((attraction, index) => {
+            const btn = document.createElement("button");
+            btn.className = "attraction-btn";
+            btn.textContent = attraction.name;
+
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".attraction-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                document.getElementById("infoTitle").textContent = attraction.name;
+                document.getElementById("infoSpeed").textContent = attraction.speed;
+                document.getElementById("infoHeight").textContent = attraction.height;
+                document.getElementById("infoLength").textContent = attraction.length;
+                document.getElementById("infoDuration").textContent = attraction.duration;
+                document.getElementById("infoCapacity").textContent = attraction.capacity;
+
+                infoBox.classList.add("active");
+            });
+
+            grid.appendChild(btn);
+        });
+    }
+
+    initAttractionSection();
+
+
+    /*
+    ==================================================
+       EUROPA-PARK WEETJES
+    ==================================================
+    */
+
+    const facts = [
+        "Europa-Park opende op 12 juli 1975.",
+        "Het park ligt in Rust, een dorpje met minder inwoners dan het park op een drukke dag bezoekers heeft.",
+        "Europa‑Park is het grootste attractiepark van Duitsland.",
+        "Het park heeft meer dan 100 attracties en shows.",
+        "Het park is eigendom van de familie Mack, die ook Mack Rides bouwt.",
+        "Veel attracties zijn dus letterlijk “huisgemaakt”.",
+        "Europa‑Park heeft meer dan 15 themagebieden, allemaal gebaseerd op Europese landen.",
+        "Het park ontvangt jaarlijks ruim 6 miljoen bezoekers.",
+        "Europa‑Park is meerdere keren uitgeroepen tot Beste Pretpark ter Wereld.",
+        "Het park heeft 6 themahotels, een camping en een pension.",
+        "Silver Star was ooit de hoogste achtbaan van Europa (73 meter).",
+        "Silver Star haalt een topsnelheid van 130 km/u.",
+        "Blue Fire lanceert je in 2,5 seconden naar 100 km/u.",
+        "Blue Fire heeft een heartline roll die extreem soepel is door de Mack‑treinen.",
+        "Wodan is de eerste houten achtbaan van het park.",
+        "Wodan heeft een thema gebaseerd op Noordse mythologie.",
+        "Eurosat – CanCan Coaster heeft een volledig vernieuwde track sinds 2018.",
+        "De iconische zilveren bol van Eurosat is 45 meter hoog.",
+        "Voletarium is Europa’s grootste flying theater.",
+        "De film van Voletarium bevat meer dan 15 Europese locaties.",
+        "Arthur is een samenwerking met de Franse filmmaker Luc Besson.",
+        "Arthur heeft zowel indoor als outdoor stukken én een darkride‑gedeelte.",
+        "Atlantica SuperSplash heeft een achteruit‑drop.",
+        "Poseidon combineert achtbaan en watercoaster in één rit.",
+        "Euro‑Mir heeft een soundtrack die een cult‑status heeft gekregen.",
+        "Euro‑Mir heeft draaiende gondels die random rotaties maken.",
+        "Alpenexpress was de eerste powered coaster van Mack Rides.",
+        "Alpenexpress had ooit een VR‑variant (Coastiality).",
+        "Matterhorn Blitz heeft een lift die werkt als een soort “verticale trap”.",
+        "Geisterschloss is een klassieke darkride geïnspireerd op Haunted Mansion.",
+        "Piraten in Batavia is volledig herbouwd na de brand van 2018.",
+        "De nieuwe Batavia heeft meer dan 100 animatronics.",
+        "In het Duitse themagebied vind je een miniatuur van het park.",
+        "In het Franse themagebied staat een replica van de Moulin Rouge.",
+        "Het Scandinavische gebied is na de brand volledig opnieuw opgebouwd",
+        "In het Italiaanse gebied vind je verwijzingen naar Leonardo da Vinci.",
+        "In het Nederlandse gebied staat een windmolen met bewegende wieken.",
+        "In het Russische gebied staat een mini‑Mir space station.",
+        "In het Engelse gebied kun je een klassieke double‑decker bus spotten.",
+        "Het Zwitserse gebied heeft een mini‑Matterhorn.",
+        "In het Oostenrijkse gebied hoor je traditionele Alpenmuziek.",
+        "Het Spaanse gebied heeft een grote arena geïnspireerd op Sevilla.",
+        "Europa‑Park heeft een eigen monorail én een panoramatrein.",
+        "Het park heeft een eigen bierbrouwerij: Biergarten & Schloss.",
+        "De mascotte Ed Euromaus bestaat sinds 1982.",
+        "De familie Mack woont letterlijk naast het park."
+    ];
+
+
+    function getDayOfYear(date) {
+        const start = new Date(date.getFullYear(), 0, 0);
+        const diff = date - start;
+        return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+
+    function showDailyFact() {
+        const today = new Date();
+        const day = getDayOfYear(today);
+        const index = day % facts.length;
+
+        document.getElementById("factText").textContent = facts[index];
+        document.getElementById("factNumber").textContent = "WEETJE #" + (index + 1);
+    }
+
+    showDailyFact();
+
+
+    /*
+    ==================================================
+       BUCKETLIST
+    ==================================================
+    */
+
+    const rides = [
+        "Voltron Nevera ⚡",
+        "Blue Fire 🔥",
+        "Silver Star ⭐",
+        "Wodan – Timburcoaster 🪵",
+        "Euro-Mir 🚀",
+        "Eurosat 🎢",
+        "Arthur 🧚",
+        "Piraten in Batavia 🏴‍☠️",
+        "CanCan Coaster 💃",
+        "Atlantica SuperSplash 🌊",
+        "Poseidon 🌊",
+        "Matterhorn-Blitz 🏔️",
+        "Eurosat – CanCan Coaster 🎠",
+        "Snacks halen 🍟",
+        "Een groepsfoto maken 📸",
+        "Een souvenir kopen 🛍️",
+        "Minstens één keer volledig doorweekt worden 💦",
+        "De hele dag blijven tot sluitingstijd 🌙"
+    ];
+
+
+    const bucketList = document.getElementById("bucketList");
+
+
+    function loadBucketList() {
+        const saved = JSON.parse(localStorage.getItem("europaparkBucketList")) || [];
+
+        rides.forEach((ride, index) => {
+            const item = document.createElement("label");
+            item.className = "bucket-item";
+
+            if (saved[index]) {
+                item.classList.add("checked");
+            }
+
+            item.innerHTML = `
+                <input type="checkbox" ${saved[index] ? "checked" : ""}>
+                <span class="check"></span>
+                <span class="ride">${ride}</span>
+            `;
+
+            const checkbox = item.querySelector("input");
+
+            checkbox.addEventListener("change", () => {
+                if (checkbox.checked) {
+                    item.classList.add("checked");
+                } else {
+                    item.classList.remove("checked");
+                }
+                saveBucketList();
+            });
+
+            bucketList.appendChild(item);
+        });
+
+        updateProgress();
+    }
+
+
+    function saveBucketList() {
+        const items = document.querySelectorAll(".bucket-item");
+        const saved = [...items].map(item => item.classList.contains("checked"));
+
+        localStorage.setItem("europaparkBucketList", JSON.stringify(saved));
+        updateProgress();
+    }
+
+
+    function updateProgress() {
+        const items = document.querySelectorAll(".bucket-item");
+        const checked = document.querySelectorAll(".bucket-item.checked").length;
+        const percentage = Math.round((checked / items.length) * 100);
+
+        document.getElementById("progressText").textContent = percentage + "%";
+        document.getElementById("progressFill").style.width = percentage + "%";
+    }
+
+    loadBucketList();
+
+
+    /*
+    ==================================================
+       RANDOM ATTRACTIE
+    ==================================================
+    */
+
+    const randomRides = [
+        "🚂 Alpenexpress Enzian - Oostenrijk",
+        "🧚 Arthur - Koninkrijk van de Minimoys",
+        "💦 Atlantica SuperSplash - Portugal",
+        "🚃 Ba-a-a Express - Ierland",
+        "🎢 Blue Fire - IJsland",
+        "🛷 Schweizer Bobbahn - Zwitserland",
+        "🎢 Euro-Mir - Rusland",
+        "🎤 Eurosat - CanCan Coaster - Frankrijk",
+        "🏔️ Matterhorn-Blitz - Zwitserland",
+        "🐴 Pegasus - Griekenland",
+        "🎢 Silver Star - Monaco",
+        "🎢 Voltron Nevera - Kroatië",
+        "🪵 Wodan - IJsland",
+        "💧 Poseidon - Griekenland",
+        "🏛️ Abenteuer Atlantis - Griekenland",
+        "👵 Madame Freudenreich Curiosités - Frankrijk",
+        "🍕 Piccolo Mondo - Italië",
+        "🏴‍☠️ Piraten in Batavia - Nederland",
+        "📖 Schlittenfahrt Schneeflöckchen - Rusland",
+        "🍄 Snorri Touren - Scandinavië",
+        "👻 Castello dei Medici - Italië"
+    ];
+
+
+    function randomRide() {
+        const result = document.getElementById("randomResult");
+        result.textContent = "🎲 Kiezen...";
+
+        let counter = 0;
+
+        const animation = setInterval(() => {
+            const random = Math.floor(Math.random() * randomRides.length);
+            result.textContent = randomRides[random];
+            counter++;
+
+            if (counter >= 12) {
+                clearInterval(animation);
+                const final = Math.floor(Math.random() * randomRides.length);
+                result.textContent = randomRides[final];
+                confetti();
+            }
+        }, 80);
+    }
+
+
+    /*
+    ==================================================
+       ACHIEVEMENTS
+    ==================================================
+    */
+
+    function unlockAchievement(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add("unlocked");
+        }
+    }
+
+
+    function updateAchievements(days) {
+        if (days <= 50) unlockAchievement("achievement50");
+        if (days <= 40) unlockAchievement("achievement40");
+        if (days <= 30) unlockAchievement("achievement30");
+        if (days <= 25) unlockAchievement("achievement25");
+        if (days <= 20) unlockAchievement("achievement20");
+        if (days <= 14) unlockAchievement("achievement14");
+        if (days <= 7) unlockAchievement("achievement7");
+        if (days <= 1) unlockAchievement("achievement1");
+    }
+
+
+    /*
+    ==================================================
+       CONFETTI
+    ==================================================
+    */
+
+    function confetti() {
+        const emojis = ["🎉", "🎢", "⭐", "✨", "🎊"];
+
+        for (let i = 0; i < 35; i++) {
+            const piece = document.createElement("div");
+            piece.className = "confetti";
+            piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+            piece.style.left = Math.random() * 100 + "vw";
+            piece.style.animationDuration = (2 + Math.random() * 3) + "s";
+            piece.style.fontSize = (12 + Math.random() * 15) + "px";
+
+            document.body.appendChild(piece);
+
+            setTimeout(() => {
+                piece.remove();
+            }, 5000);
+        }
+    }
+
 </script>
 
 </body>
