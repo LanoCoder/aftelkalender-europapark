@@ -542,83 +542,124 @@
         }
 
         /* =========================
-           BUCKET LIST
+           FAVORIETENLIJST
         ========================= */
 
-        .bucket-grid {
-            display: grid;
-
-            grid-template-columns: repeat(2, 1fr);
-
+        .favorite-add {
+            display: flex;
             gap: 10px;
-
             margin-top: 20px;
         }
 
-        .bucket-item {
+        .favorite-input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 13px;
+            outline: none;
+            color: white;
+            background: rgba(255,255,255,.06);
+            font: inherit;
+            transition: .2s ease;
+        }
+
+        .favorite-input::placeholder {
+            color: #85859a;
+        }
+
+        .favorite-input:focus {
+            border-color: rgba(139,92,246,.7);
+            background: rgba(255,255,255,.09);
+            box-shadow: 0 0 0 3px rgba(139,92,246,.12);
+        }
+
+        .favorite-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .favorite-item {
             display: flex;
-
             align-items: center;
-            gap: 12px;
-
-            padding: 14px;
-
+            gap: 10px;
+            min-width: 0;
+            padding: 12px 13px;
             border-radius: 14px;
-
             background: rgba(255,255,255,.045);
-
             border: 1px solid rgba(255,255,255,.08);
-
-            cursor: pointer;
-
             transition: .2s;
         }
 
-        .bucket-item:hover {
+        .favorite-item:hover {
             background: rgba(255,255,255,.08);
+            border-color: rgba(255,255,255,.16);
         }
 
-        .bucket-item input {
+        .favorite-item input {
             display: none;
         }
 
-        .check {
+        .favorite-check {
+            flex: 0 0 auto;
             width: 24px;
             height: 24px;
-
             display: grid;
             place-items: center;
-
             border: 2px solid rgba(255,255,255,.25);
-
             border-radius: 7px;
-
             font-size: .75rem;
-
+            cursor: pointer;
             transition: .2s;
         }
 
-        .bucket-item.checked .check {
-            background: linear-gradient(
-                135deg,
-                var(--accent),
-                var(--accent2)
-            );
-
+        .favorite-item.checked .favorite-check {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
             border-color: transparent;
         }
 
-        .bucket-item.checked .check::after {
+        .favorite-item.checked .favorite-check::after {
             content: "✓";
         }
 
-        .bucket-item.checked .ride {
+        .favorite-text {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .favorite-item.checked .favorite-text {
             color: #8e8ea3;
             text-decoration: line-through;
         }
 
-        .ride {
-            font-weight: 700;
+        .favorite-delete {
+            flex: 0 0 auto;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 9px;
+            font-size: .85rem;
+            opacity: .65;
+        }
+
+        .favorite-delete:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .favorite-empty {
+            grid-column: 1 / -1;
+            padding: 22px;
+            text-align: center;
+            color: var(--muted);
+            border: 1px dashed rgba(255,255,255,.13);
+            border-radius: 14px;
+            background: rgba(255,255,255,.025);
         }
 
         /* =========================
@@ -851,8 +892,16 @@
                 text-align: center;
             }
 
-            .bucket-grid {
+            .favorite-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .favorite-add {
+                flex-direction: column;
+            }
+
+            .favorite-add button {
+                width: 100%;
             }
 
             .achievements {
@@ -1079,34 +1128,38 @@
     <section class="card">
 
         <div class="card-title">
-            🎯 Onze Europa-Park bucketlist
+            ❤️ Mijn favorieten
         </div>
 
         <div class="card-description">
-            Vink af wat je hebt gedaan. Het wordt automatisch opgeslagen
+            Voeg zelf dingen toe die je tijdens de Europa-Park reis wilt doen. Vink ze af zodra je ze hebt gedaan.
         </div>
 
-        <div class="bucket-grid" id="bucketList"></div>
+        <div class="favorite-add">
+            <input
+                type="text"
+                id="favoriteInput"
+                class="favorite-input"
+                placeholder="Bijvoorbeeld: Voltron nog een keer doen..."
+                maxlength="100"
+                autocomplete="off"
+            >
+            <button class="primary" id="addFavoriteButton" type="button">
+                ➕ Toevoegen
+            </button>
+        </div>
+
+        <div class="favorite-grid" id="favoriteList"></div>
 
         <div class="progress-wrapper">
 
             <div class="progress-top">
-
-                <span>Voortgang</span>
-
-                <span id="progressText">
-                    0%
-                </span>
-
+                <span>Afgevinkt</span>
+                <span id="progressText">0%</span>
             </div>
 
             <div class="progress-bar">
-
-                <div
-                    class="progress-fill"
-                    id="progressFill">
-                </div>
-
+                <div class="progress-fill" id="progressFill"></div>
             </div>
 
         </div>
@@ -1350,7 +1403,7 @@
     */
 
     const targetDate =
-        new Date("2026-10-18T10:00:00");
+        new Date("2026-10-18T09:30:00");
 
 
     /*
@@ -1605,89 +1658,135 @@
 
     /*
     ==================================================
-       BUCKETLIST
+       PERSOONLIJKE FAVORIETENLIJST
     ==================================================
     */
 
-    const rides = [
-        "Voltron Nevera ⚡",
-        "Blue Fire 🔥",
-        "Silver Star ⭐",
-        "Wodan – Timburcoaster 🪵",
-        "Euro-Mir 🚀",
-        "Eurosat 🎢",
-        "Arthur 🧚",
-        "Piraten in Batavia 🏴‍☠️",
-        "CanCan Coaster 💃",
-        "Atlantica SuperSplash 🌊",
-        "Poseidon 🌊",
-        "Matterhorn-Blitz 🏔️",
-        "Eurosat – CanCan Coaster 🎠",
-        "Snacks halen 🍟",
-        "Een groepsfoto maken 📸",
-        "Een souvenir kopen 🛍️",
-        "Minstens één keer volledig doorweekt worden 💦",
-        "De hele dag blijven tot sluitingstijd 🌙"
-    ];
+    const favoriteList = document.getElementById("favoriteList");
+    const favoriteInput = document.getElementById("favoriteInput");
+    const addFavoriteButton = document.getElementById("addFavoriteButton");
 
+    let favorites = JSON.parse(localStorage.getItem("europaparkFavorites")) || [];
 
-    const bucketList = document.getElementById("bucketList");
+    function saveFavorites() {
+        localStorage.setItem("europaparkFavorites", JSON.stringify(favorites));
+    }
 
+    function renderFavorites() {
+        favoriteList.innerHTML = "";
 
-    function loadBucketList() {
-        const saved = JSON.parse(localStorage.getItem("europaparkBucketList")) || [];
+        if (favorites.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "favorite-empty";
+            empty.textContent = "❤️ Je favorietenlijst is nog leeg. Voeg hierboven iets toe!";
+            favoriteList.appendChild(empty);
+            updateProgress();
+            return;
+        }
 
-        rides.forEach((ride, index) => {
-            const item = document.createElement("label");
-            item.className = "bucket-item";
+        favorites.forEach((favorite, index) => {
+            const item = document.createElement("div");
+            item.className = "favorite-item" + (favorite.checked ? " checked" : "");
 
-            if (saved[index]) {
-                item.classList.add("checked");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = favorite.checked;
+
+            const check = document.createElement("span");
+            check.className = "favorite-check";
+            check.setAttribute("role", "checkbox");
+            check.setAttribute("aria-label", "Markeer als gedaan");
+            check.tabIndex = 0;
+
+            const text = document.createElement("span");
+            text.className = "favorite-text";
+            text.textContent = favorite.text;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "favorite-delete";
+            deleteButton.type = "button";
+            deleteButton.textContent = "🗑️";
+            deleteButton.title = "Verwijder favoriet";
+            deleteButton.setAttribute("aria-label", "Verwijder " + favorite.text);
+
+            function toggleFavorite() {
+                favorites[index].checked = !favorites[index].checked;
+                saveFavorites();
+                renderFavorites();
+
+                if (favorites[index] && favorites[index].checked) {
+                    // Kleine viering bij het afvinken
+                    confetti();
+                }
             }
 
-            item.innerHTML = `
-                <input type="checkbox" ${saved[index] ? "checked" : ""}>
-                <span class="check"></span>
-                <span class="ride">${ride}</span>
-            `;
-
-            const checkbox = item.querySelector("input");
-
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    item.classList.add("checked");
-                } else {
-                    item.classList.remove("checked");
+            checkbox.addEventListener("change", toggleFavorite);
+            check.addEventListener("click", toggleFavorite);
+            check.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleFavorite();
                 }
-                saveBucketList();
             });
 
-            bucketList.appendChild(item);
+            text.addEventListener("click", toggleFavorite);
+
+            deleteButton.addEventListener("click", () => {
+                favorites.splice(index, 1);
+                saveFavorites();
+                renderFavorites();
+            });
+
+            item.appendChild(checkbox);
+            item.appendChild(check);
+            item.appendChild(text);
+            item.appendChild(deleteButton);
+            favoriteList.appendChild(item);
         });
 
         updateProgress();
     }
 
+    function addFavorite() {
+        const text = favoriteInput.value.trim();
 
-    function saveBucketList() {
-        const items = document.querySelectorAll(".bucket-item");
-        const saved = [...items].map(item => item.classList.contains("checked"));
+        if (!text) {
+            favoriteInput.focus();
+            return;
+        }
 
-        localStorage.setItem("europaparkBucketList", JSON.stringify(saved));
-        updateProgress();
+        favorites.push({
+            text: text,
+            checked: false
+        });
+
+        saveFavorites();
+        favoriteInput.value = "";
+        renderFavorites();
+        favoriteInput.focus();
     }
 
+    addFavoriteButton.addEventListener("click", addFavorite);
+
+    favoriteInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            addFavorite();
+        }
+    });
 
     function updateProgress() {
-        const items = document.querySelectorAll(".bucket-item");
-        const checked = document.querySelectorAll(".bucket-item.checked").length;
-        const percentage = Math.round((checked / items.length) * 100);
+        const total = favorites.length;
+        const checked = favorites.filter(favorite => favorite.checked).length;
+        const percentage = total === 0 ? 0 : Math.round((checked / total) * 100);
 
-        document.getElementById("progressText").textContent = percentage + "%";
+        document.getElementById("progressText").textContent =
+            checked + " / " + total + " (" + percentage + "%)";
+
         document.getElementById("progressFill").style.width = percentage + "%";
     }
 
-    loadBucketList();
+    renderFavorites();
 
 
     /*
